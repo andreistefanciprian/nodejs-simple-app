@@ -1,5 +1,11 @@
 pipeline {
-    agent any
+
+   agent {
+       node {
+           label "centos"
+       }
+   }
+
     environment {
         DOCKER_IMAGE_NAME = "andreistefanciprian/nodejs-simple-app"
     }
