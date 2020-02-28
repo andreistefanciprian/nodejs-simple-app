@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        DOCKER_IMAGE_NAME = "andreistefanciprian/sample-app"
+        DOCKER_IMAGE_NAME = "andreistefanciprian/nodejs-simple-app"
     }
     stages {
         stage('Build Docker Image') {
@@ -32,8 +32,9 @@ pipeline {
         }
         stage('DeployToAgent') {
             steps {
-                sh 'Deploy container to Agent'
-            }
+                script {
+                    echo 'Deploy container to Docker Agent!'
+                }
         }
     }
 }
