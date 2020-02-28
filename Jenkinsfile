@@ -3,7 +3,9 @@ pipeline {
     environment {
         DOCKER_IMAGE_NAME = "andreistefanciprian/nodejs-simple-app"
     }
+
     stages {
+
         stage('Build Docker Image') {
             when {
                 branch 'master'
@@ -17,6 +19,7 @@ pipeline {
                 }
             }
         }
+
         stage('Push Docker Image') {
             when {
                 branch 'master'
@@ -29,12 +32,6 @@ pipeline {
                     }
                 }
             }
-        }
-        stage('DeployToAgent') {
-            steps {
-                script {
-                    echo 'Deploy container to Docker Agent!'
-                }
         }
     }
 }
