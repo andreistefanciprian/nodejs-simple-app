@@ -12,9 +12,14 @@ pipeline {
 
     stages {
 
+        stage('Clone repository') {
+            /* Cloning the Repository to our Workspace */
+            checkout scm
+        }
+
         stage('Build Docker Image') {
             when {
-                branch 'master'
+                branch 'jenkinsfile-with-scm'
             }
             steps {
                 script {
@@ -28,7 +33,7 @@ pipeline {
 
         stage('Push Docker Image') {
             when {
-                branch 'master'
+                branch 'jenkinsfile-with-scm'
             }
             steps {
                 script {
