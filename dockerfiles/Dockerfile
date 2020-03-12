@@ -1,4 +1,4 @@
-FROM andreistefanciprian/private_repo
+FROM automationdevops19/private_repo
 WORKDIR /app/test
 RUN touch test_file.txt
 ADD app.js /app.js
