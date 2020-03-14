@@ -13,7 +13,6 @@ $ docker image ls
 
 ### Run and check your application container
 ```buildoutcfg
-
 # run nodejs app on 8080 locahost port from local image
 $ docker container run --publish 8080:8080 --detach --name nodejs-app nodejs-app:v01.11
 
@@ -49,7 +48,6 @@ $ curl localhost:8080
 
 # check application logs on container
 $ docker container logs nodejs
-
 ```
 
 ### Share Docker image
@@ -69,7 +67,6 @@ $ docker image rm nodejs-app:v01.11 andreistefanciprian/nodejs-app:v01.11
 $ docker container run --publish 8080:8080 --detach --name nodejs-app andreistefanciprian/nodejs-app:v01.11
 
 # you can repeat test checks in previous section to verify your container runs as expected
-
 ```
 
 # PART 2 - Scale your application with Kubernetes
@@ -88,7 +85,6 @@ $ kubectl port-forward nodejs-app-pod-name 8080:8080
 
 ### Verify application is running
 ```buildoutcfg
-
 # check kubernetes built objects
 $ kubectl get all -n default
 NAME                              READY   STATUS    RESTARTS   AGE
@@ -130,12 +126,10 @@ $ kubectl logs nodejs-app-58b6f4769c-v9xhc -c nodejs-app --timestamps
 
 # describe kubernetes objects with kubectl describe commands
 $ kubectl describe deployment nodejs-app
-
 ```
 
 ### Verify Kubernetes replaces failed containers/pods automatically
 ```buildoutcfg
-
 ## TEST 1: test pod gets rebuilt automatically in case application container is not responding 
 # we'll simulate this by killing PID running inside app container
 # get PID for application process running inside container
@@ -181,7 +175,6 @@ $ kubectl get pods
 NAME                          READY   STATUS    RESTARTS   AGE
 nodejs-app-58b6f4769c-h86n9   1/1     Running   0          44s
 nodejs-app-58b6f4769c-v9xhc   1/1     Running   1          137m
-
 ```
 
 ### Check k8s automatically scales your containers based on resource usage
@@ -208,7 +201,6 @@ nodejs-app   Deployment/nodejs-app   33%/30%   2         5         4          14
 
 ### Cleanup
 ```buildoutcfg
-
 # wipe out all user created resource 
-kubectl delete all --all --namespace default
+$ kubectl delete all --all --namespace default
 ```
