@@ -7,7 +7,9 @@ pipeline {
    }
 
     environment {
-        DOCKER_IMAGE_NAME = "andreistefanciprian/nodejs-simple-app"
+        CONTAINER_IMAGE_NAME = "andreistefanciprian/nodejs-app"
+        CONTAINER_REGISTRY = "https://registry.hub.docker.com"
+        CONTAINER_CREDENTIALS =  "docker_hub_login"
     }
 
     stages {
@@ -18,7 +20,7 @@ pipeline {
             }
             steps {
                 script {
-                    app = docker.build(DOCKER_IMAGE_NAME)
+                    app = docker.build(CONTAINER_IMAGE_NAME)
                     app.inside {
                         sh 'echo $(curl localhost:8080)'
                     }
@@ -32,7 +34,7 @@ pipeline {
             }
             steps {
                 script {
-                    docker.withRegistry('https://registry.hub.docker.com', 'docker_hub_login') {
+                    docker.withRegistry(CONTAINER_REGISTRY, CONTAINER_CREDENTIALS) {
                         app.push("${env.BUILD_NUMBER}")
                         app.push("latest")
                     }
