@@ -202,6 +202,6 @@ nodejs-app   Deployment/nodejs-app   33%/30%   2         5         4          14
 
 ### Cleanup
 ```buildoutcfg
-# wipe out all user created resource 
+# wipe out all user created resources
 $ kubectl delete all --all --namespace default
 ```
