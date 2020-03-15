@@ -14,6 +14,10 @@ spec:
       labels:
         app: nodejs-app
     spec:
+      securityContext:
+        runAsUser: 999
+        runAsGroup: 999
+        fsGroup: 999
       containers:
       - name: nodejs-app
         image: andreistefanciprian/nodejs-app:green

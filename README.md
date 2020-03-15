@@ -72,15 +72,13 @@ $ docker container run --publish 8080:8080 --detach --name nodejs-app andreistef
 
 # PART 2 - Scale your application with Kubernetes
 
-### Build application (scenario 1)
+### Build application with Kubernetes and verify it's running (scenario 1)
 ```buildoutcfg
 # build resources
 $ kubectl apply -f k8s/step1-build-app/.
 deployment.apps/nodejs-app created
 service/nodejs-app created
-```
-### Verify application is running (scenario 1)
-```buildoutcfg
+
 # check kubernetes built objects
 $ kubectl get all -n default
 NAME                              READY   STATUS    RESTARTS   AGE
@@ -258,6 +256,25 @@ nodejs-app-prod     0/0     0            0           12m
 # now all curl requests should return the Canary deployment page
 
 ```
+
+### Other topics
+* Services (ClusterIP, NodePort, LoadBalancer, ExternalName)
+* Ingress (manage access to external services)
+* Blue/Green deployments
+* App lifecycle with kubectl rollouts
+* Persistent Volumes
+* Volumes (hostPath, emptyDir, ConfigMap, persistentVolumeClaim, Secrets)
+* Security with Kubernetes (RBACs, NetworkPolicies, Secure images with SA and Kuberntes Secrets stored credentials )
+* Statefull Sets
+* Jobs/Cronjobs
+* DaemonSets
+* Node/Pod affinity
+* Taints and Tolerations
+* Multi container Pods
+* Package management with Helm
+* Istio (service mesh)
+
+
 
 ### Cleanup
 ```buildoutcfg
