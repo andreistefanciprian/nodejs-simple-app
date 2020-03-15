@@ -14,7 +14,7 @@ WORKDIR /usr/src/app
 COPY app.js .
 
 # Define Environment Variable
-ENV APP_VER v01.11
+ENV APP_VER blue
 
 # Inform Docker that the container is listening on the specified port at runtime.
 EXPOSE 8080

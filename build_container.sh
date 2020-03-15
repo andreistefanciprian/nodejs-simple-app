@@ -2,7 +2,7 @@
 
 # variables
 CONTAINER_NAME=nodejs-app
-TAG="v01.11"
+TAG=blue
 REPO_CONTAINER_NAME_TAG="andreistefanciprian/${CONTAINER_NAME}:${TAG}"
 
 echo -e "\nRemove container if exists..."
@@ -21,5 +21,6 @@ docker run -d -p 8080:8080 --name $CONTAINER_NAME $CONTAINER_NAME:$TAG
 echo -e "\nList containers..."
 docker container ls
 
+sleep 5
 # specify push as positional param if you want to push this image to dockerhub
 [ "$1" == "push" ] && ( docker image tag $CONTAINER_NAME:$TAG $REPO_CONTAINER_NAME_TAG && docker image push $REPO_CONTAINER_NAME_TAG)
