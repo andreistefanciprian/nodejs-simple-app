@@ -15,17 +15,11 @@ spec:
         app: nodejs-app
     spec:
       containers:
-      - image: andreistefanciprian/nodejs-app:v01.11
-        name: nodejs-app
+      - name: nodejs-app
+        image: andreistefanciprian/nodejs-app:v01.11
+        imagePullPolicy: Always
         ports:
         - containerPort: 8080
-        resources:
-          limits:
-            cpu: 200m
-            memory: 200Mi
-          requests:
-            cpu: 100m
-            memory: 100Mi
         livenessProbe:
           httpGet:
             path: /
@@ -33,4 +27,10 @@ spec:
           initialDelaySeconds: 15
           timeoutSeconds: 1
           periodSeconds: 5
-        imagePullPolicy: Always
+        resources:
+          limits:
+            cpu: 200m
+            memory: 200Mi
+          requests:
+            cpu: 100m
+            memory: 100Mi
