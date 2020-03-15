@@ -16,20 +16,21 @@ $ docker image ls
 # run nodejs app on 8080 locahost port from local image
 $ docker container run --publish 8080:8080 --detach --name nodejs-app nodejs-app:v01.11
 
-# get a promp inside the container and verify application file system
+# get a prompt inside the container and verify application file system
 $ docker exec -ti nodejs-app sh
-# pwd
+$ pwd
 /usr/src/app
-# ls
+$ ls
 app.js
-# echo $APP_VER
+$ whoami
+nodejsapp
+$ id
+uid=999(nodejsapp) gid=999(nodejsapp) groups=999(nodejsapp),27(sudo)
+$ echo $APP_VER
 v01.11
-# node -v
+$ node -v
 v7.10.1
-# whoami
-root
-# exit
-$
+$ exit
 
 # get PID of running processes inside container
 $ docker container top nodejs-app
