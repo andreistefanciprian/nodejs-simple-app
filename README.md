@@ -5,54 +5,54 @@
 ```buildoutcfg
 
 # buid image described in Dockerfile
-$ docker image build -t nodejs-app:blue .
+docker image build -t nodejs-app:blue .
 
 # verify image is available locally
-$ docker image ls
+docker image ls
 ```
 
 ### Run and check your application container
 ```buildoutcfg
 # run nodejs app on 8080 locahost port from local image
-$ docker container run --publish 8080:8080 --detach --build-arg API_VER=v2 --name nodejs-app nodejs-app:blue
+docker container run --publish 8080:8080 --detach --build-arg API_VER=v2 --name nodejs-app nodejs-app:blue
 
 # get a prompt inside the container and do some checks
-$ docker exec -ti nodejs-app sh
+docker exec -ti nodejs-app sh
 
 # get PID of running processes inside container
-$ docker container top nodejs-app
+docker container top nodejs-app
 
 # check these process are running on localhost
-$ ps u PID
+ps u PID
 
 # monitor resource usage
-$ docker container stats --no-stream
+docker container stats --no-stream
 
 # check application is running on port 80080
-$ sudo netstat -tapnl | grep 8080
+sudo netstat -tapnl | grep 8080
 
 # access application
-$ curl localhost:8080
+curl localhost:8080
 
 # check application logs on container
-$ docker container logs nodejs
+docker container logs nodejs
 ```
 
 ### Share Docker image
 
 ```buildoutcfg
 # tag image for DockerHub registry
-$ docker image tag nodejs-app:blue andreistefanciprian/nodejs-app:blue
+docker image tag nodejs-app:blue andreistefanciprian/nodejs-app:blue
 
 # push image to DockerHub registry
-$ docker image push andreistefanciprian/nodejs-sample-app:v01 andreistefanciprian/nodejs-app:blue
+docker image push andreistefanciprian/nodejs-sample-app:v01 andreistefanciprian/nodejs-app:blue
 
 # delete container and container image
-$ docker container rm -f nodejs-app
-$ docker image rm nodejs-app:blue andreistefanciprian/nodejs-app:blue
+docker container rm -f nodejs-app
+docker image rm nodejs-app:blue andreistefanciprian/nodejs-app:blue
 
 # run nodejs app on 8080 locahost port from DockerHub image
-$ docker container run --publish 8080:8080 --detach --name nodejs-app andreistefanciprian/nodejs-app:blue
+docker container run --publish 8080:8080 --detach --name nodejs-app andreistefanciprian/nodejs-app:blue
 
 # you can repeat test checks in previous section to verify your container runs as expected
 ```
@@ -62,90 +62,90 @@ $ docker container run --publish 8080:8080 --detach --name nodejs-app andreistef
 ### Build application with Kubernetes and verify it's running (scenario 1)
 ```buildoutcfg
 # build resources
-$ kubectl apply -f k8s/step1-build-app/.
+kubectl apply -f k8s/step1-build-app/.
 
 # check kubernetes built objects
-$ kubectl get all -n default
+kubectl get all -n default
 
 # connect to container inside kubernetes pod and do some checks
-$ kubectl exec -ti POD-NAME sh
+kubectl exec -ti POD-NAME sh
 
 # build kubernetes pod running curl and verify appplication is reacheable
-$ kubectl run curl --image=radial/busyboxplus:curl -i --tty --restart Never
+kubectl run curl --image=radial/busyboxplus:curl -i --tty --restart Never
 [ root@curl:/ ]$ nslookup nodejs-app
 [ root@curl:/ ]$ curl nodejs-app:8080
 [ root@curl:/ ]$ while true; do curl nodejs-app.default.svc.cluster.local:8080; sleep 2; done
 [ root@curl:/ ]$ curl 10-244-1-201.default.Pod.cluster.local:8080
 
 # check logs per deployment/pod/container
-$ kubectl logs deployment/nodejs-app --timestamps
-$ kubectl logs POD-NAME -c nodejs-app --timestamps
+kubectl logs deployment/nodejs-app --timestamps
+kubectl logs POD-NAME -c nodejs-app --timestamps
 
 # describe kubernetes objects with kubectl describe commands
-$ kubectl describe deployment nodejs-app
+kubectl describe deployment nodejs-app
 ```
 
 ### Verify Kubernetes replaces failed containers/pods automatically (scenario 2)
 ```buildoutcfg
 # build resources
-$ kubectl apply -f k8s/step2-liveness-probe/.
+kubectl apply -f k8s/step2-liveness-probe/.
 
 ## TEST 1: test pod gets rebuilt automatically in case application container is not responding 
 # we'll simulate this by killing PID running inside app container
 # get PID for application process running inside container
-$ kubectl exec -ti POD-NAME ps aux
+kubectl exec -ti POD-NAME ps aux
 
 # kill application process running inside pod
-$ kubectl exec -ti POD-NAME kill PID
+kubectl exec -ti POD-NAME kill PID
 
 # check kubernetes events
-$ kubectl get events
+kubectl get events
 
 # notice the pods is still there but the container RESTARTS counter has increased with 1
-$ kubectl get pod POD-NAME
+kubectl get pod POD-NAME
 
 ## TEST2: test pod gets rescheduled when k8s node stops working or pod is failing for some reason.
 # manually delete pod
-$ kubectl delete pod POD-NAME
+kubectl delete pod POD-NAME
 
 # check k8s events. Notice new pod being created, replacing the delete pod
-$ kubectl get events
+kubectl get events
 
 # check pods
-$ kubectl get pods
+kubectl get pods
 ```
 
 ### Check k8s automatically scales your containers based on resource usage (scenario 3)
 ```buildoutcfg
 
 # build resources
-$ kubectl apply -f k8s/step3-autoscaler/.
+kubectl apply -f k8s/step3-autoscaler/.
 
 # Test autoscaler
-$ kubectl run curl2 --image=radial/busyboxplus:curl -i --tty --restart Never -- /bin/sh -c "while true; do curl nodejs-app.default.svc.cluster.local:8080; done"
+kubectl run curl2 --image=radial/busyboxplus:curl -i --tty --restart Never -- /bin/sh -c "while true; do curl nodejs-app.default.svc.cluster.local:8080; done"
 
 # monitor autoscaler resource usage going up because of too many curl requests
 # once CPU target is reached new replicas will be spawned
-$ kubectl get hpa -w
+kubectl get hpa -w
 ```
 
 ### Canary deployments (scenario 4)
 ```buildoutcfg
 
 # build resources
-$ kubectl apply -f k8s/step4-canary-deployment/deployment-prod.yaml
-$ kubectl apply -f k8s/step4-canary-deployment/service.yaml
+kubectl apply -f k8s/step4-canary-deployment/deployment-prod.yaml
+kubectl apply -f k8s/step4-canary-deployment/service.yaml
 # build canary deployment
-$ kubectl apply -f k8s/step4-canary-deployment/deployment-canary.yaml
+kubectl apply -f k8s/step4-canary-deployment/deployment-canary.yaml
 
 # curl application while doing the canary deployment
-$ while true; do curl localhost:30001; sleep 0.5; done
+while true; do curl localhost:30001; sleep 0.5; done
 
 # incrementally increase the number of replicas on the canary deployment
 # while at the same time the number of replicas on the initial deployment is decreased
-$ kubectl get deployments
-$ kubectl scale --replicas 3 deployment nodejs-app-canary
-$ kubectl scale --replicas 0 deployment nodejs-app-prod
+kubectl get deployments
+kubectl scale --replicas 3 deployment nodejs-app-canary
+kubectl scale --replicas 0 deployment nodejs-app-prod
 # now all curl requests should return the Canary deployment page
 
 ```
@@ -172,21 +172,21 @@ $ kubectl scale --replicas 0 deployment nodejs-app-prod
 ### Cleanup
 ```buildoutcfg
 # wipe out all user created resources
-$ kubectl delete all --all --namespace default
+kubectl delete all --all --namespace default
 ```
 
 ### CLI commands to build resources instead of using YAML files
 ```buildoutcfg
 # Create kubernetes deployment
-$ kubectl run nodejs-app --image andreistefanciprian/nodejs-app:blue --port 8080 --requests=cpu=100m,memory=100Mi --limits=cpu=200m,memory=200Mi
+kubectl run nodejs-app --image andreistefanciprian/nodejs-app:blue --port 8080 --requests=cpu=100m,memory=100Mi --limits=cpu=200m,memory=200Mi
 
 # Create kubernetes service to expose the container application on localhost port in the range 30000-32767
-$ kubectl expose deployment nodejs-app --port 8080 --type NodePort --name nodejs-app
+kubectl expose deployment nodejs-app --port 8080 --type NodePort --name nodejs-app
 
 # or port forward container traffic from port 8080 to localhost port 8080
-$ kubectl port-forward nodejs-app-pod-name 8080:8080
+kubectl port-forward nodejs-app-pod-name 8080:8080
 
 # Create horizontal pod autoscaler for nodejs-app deployment
-$ kubectl autoscale deployment nodejs-app --cpu-percent 30 --min 2 --max 5 --name nodejs-app
+kubectl autoscale deployment nodejs-app --cpu-percent 30 --min 2 --max 5 --name nodejs-app
 
 ```
