@@ -3,12 +3,15 @@
 
 ### Build application image 
 ```buildoutcfg
-
 # buid image described in Dockerfile
 docker image build -t nodejs-app:blue .
 
 # verify image is available locally
 docker image ls
+
+# observer all docker layers that make up the image
+docker image history nodejs-app:blue
+
 ```
 
 ### Run and check your application container
@@ -22,7 +25,7 @@ docker exec -ti nodejs-app sh
 # get PID of running processes inside container
 docker container top nodejs-app
 
-# check these process are running on localhost
+# check these processes are running on localhost
 ps u PID
 
 # monitor resource usage
@@ -39,7 +42,6 @@ docker container logs nodejs
 ```
 
 ### Share Docker image
-
 ```buildoutcfg
 # tag image for DockerHub registry
 docker image tag nodejs-app:blue andreistefanciprian/nodejs-app:blue
@@ -56,6 +58,15 @@ docker container run --publish 8080:8080 --detach --name nodejs-app andreistefan
 
 # you can repeat test checks in previous section to verify your container runs as expected
 ```
+
+### Docker Compose
+
+TBD
+
+### Run Tests
+
+TBD
+
 
 # PART 2 - Scale your application with Kubernetes
 
