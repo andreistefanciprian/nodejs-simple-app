@@ -3,8 +3,8 @@
 
 ### Build application image 
 ```buildoutcfg
-# buid image described in Dockerfile
-docker image build -t nodejs-app:blue .
+# build image described in Dockerfile
+docker image build --build-arg API_VER=v2 -t nodejs-app:blue .
 
 # verify image is available locally
 docker image ls
@@ -17,7 +17,7 @@ docker image history nodejs-app:blue
 ### Run and check your application container
 ```buildoutcfg
 # run nodejs app on 8080 locahost port from local image
-docker container run --publish 8080:8080 --detach --build-arg API_VER=v2 --name nodejs-app nodejs-app:blue
+docker container run --publish 8080:8080 --detach --name nodejs-app nodejs-app:blue
 
 # get a prompt inside the container and do some checks
 docker exec -ti nodejs-app sh

@@ -1,0 +1,30 @@
+version: '3.7'
+
+services:
+
+  nodejs-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        API_VER: v3
+    image: nodejs-app:yellow
+    container_name: nodejs-app
+    ports:
+      - target: 8080
+        published: 8080
+        protocol: tcp
+    environment:
+      NEW_ENV_VAR: new-value
+    volumes:
+      - .:/app/test
+    networks:
+      - test
+
+networks:
+  test:
+
+## this is the equivalent of
+#docker network create test
+#docker image build --build-arg API_VER=v3 -t nodejs-app:yellow .
+#docker container run -p 8080:8080 -d -e NEW_ENV_VAR=new-value -v $(pwd):/app/test --network test --name nodejs-app nodejs-app:yellow
