@@ -13,20 +13,18 @@ WORKDIR /usr/src/app
 # Copy the file from your host to your current location
 COPY app.js .
 
-# Define Environment Variables
+# Define Environment Variable
 ENV IMAGE_VERSION green
 
-# Define a variable that can be passed at build-time to the builder with the docker build --build-arg API_VER=value
-ARG API_VER
-# or with a hard-coded default value
+# Define a variable that can be changed at build-time with the `docker build --build-arg API_VER=value`
+# Can have a hard-coded default value
 ARG API_VER=v1
 
 # Consume build-time variable
 ENV API_VERSION $API_VER
-#RUN echo "This is my API version: $API_VER"
 
 # Inform Docker that the container is listening on the specified port at runtime.
 EXPOSE 8080
 
-# Run the specified command within the container.
+# Run command to start application at runtime
 CMD node app.js
