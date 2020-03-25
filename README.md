@@ -9,7 +9,7 @@ docker image build --build-arg API_VER=v2 -t nodejs-app:blue .
 # verify image is available locally
 docker image ls
 
-# observer all docker layers that make up the image
+# observe all docker layers that make up the image
 docker image history nodejs-app:blue
 
 ```
