@@ -6,7 +6,7 @@ console.log("Node app starting...");
 var handler = function(request, response) {
   console.log("Received request from " + request.connection.remoteAddress);
   response.writeHead(200);
-  response.end("You've hit BLUE version running on: " + os.hostname() + "\n");
+  response.end("Hello Docker demo! | Running on: " + os.hostname() + " | v=BLUE\n");
 };
 
 var www = http.createServer(handler);

@@ -16,7 +16,7 @@ COPY app.js .
 # Define Environment Variable. Can be changed at run-time
 ENV IMAGE_VERSION green
 
-# Define variable. Can be changed at build-time and can have a hard-coded default value
+# Define a variable. Can be changed at build-time and can have a hard-coded default value
 ARG API_VER=v1
 
 # Consume build-time variable
