@@ -31,6 +31,12 @@ kubectl delete secret nginx-ssl-certs
 kubectl create secret generic certs --from-file=mydomain.com.key=certs/mydomain.com.key --from-file=mydomain.com.crt=certs/mydomain.com.crt
 ```
 
+## Create kubernetes ConfigMap for storing nginx conf
+
+```
+kubectl create configmap conf --from-file=default.conf
+```
+
 ## Build resources
 
 ```

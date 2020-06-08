@@ -15,9 +15,6 @@ data:
                 proxy_pass   http://nodejs-app:8080/;
             }
 
-            access_log  /var/log/nginx/access.log  main;
-            error_log  /var/log/nginx/error.log;
-
             error_page 404 /404.html;
                 location = /40x.html {
             }
