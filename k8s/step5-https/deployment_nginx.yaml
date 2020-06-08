@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: proxy
+  name: https-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: proxy
+  template:
+    metadata:
+      labels:
+        app: proxy
+    spec:
+      volumes:
+        - name: nginx-certs
+          secret:
+            secretName: certs
+        - name: nginx-config
+          configMap:
+            name: conf
+
+      containers:
+      - name: nginx
+        image: nginx
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 443
+        
+        volumeMounts:
+          - name: nginx-certs
+            mountPath: "/etc/nginx/ssl" 
+            readOnly: true 
+
+          - name: nginx-config
+            mountPath: "/etc/nginx/conf.d"
