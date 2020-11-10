@@ -111,12 +111,12 @@ docker volume ls
 More on docker volumes: https://docs.docker.com/storage/volumes/
 
 ### Docker networking
-Docker provides networking access to containers via a bridge interface on the Docker host.
-Default bridge subnet 172.17.0.0/16 and Gateway 172.17.0.1/16.
-Docker daemon effectively acts as a DHCP server for each container.
-Each network also has a default subnet mask and gateway.
-A container’s name defaults to be the container’s DNS name in Docker.
-
+* Docker provides networking access to containers via a bridge interface on the Docker host.
+* Default bridge subnet 172.17.0.0/16 and Gateway 172.17.0.1/16.
+* Docker daemon effectively acts as a DHCP server for each container.
+* Each network also has a default subnet mask and gateway.
+* A container’s name defaults to be the container’s DNS name in Docker.
+![Docker networks](docker-networks.png)
 ```
 # create containers
 docker container run -d --name app1 nodejs-app:blue
