@@ -16,6 +16,8 @@ WORKDIR /usr/src/app
 # Copy the file from your host to your current location
 # COPY app.js .
 ADD --chown=nodejsapp:nodejsapp app.js .
+ADD --chown=nodejsapp:nodejsapp app.test.js .
+ADD --chown=nodejsapp:nodejsapp package.json .
 
 # Define Environment Variable. Can be changed at run-time
 ENV IMAGE_VERSION blue
@@ -38,4 +40,7 @@ EXPOSE 8080
  
 ## 2nd method
 # Run command to start application at run-time
-CMD node app.js
+# CMD node app.js
+
+ENTRYPOINT [ "npm"]
+CMD ["start"]
