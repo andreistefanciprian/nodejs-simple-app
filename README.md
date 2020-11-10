@@ -6,7 +6,7 @@
 Have account on hub.docker.com.
 We'll use this account later for pushing docker images to a docker registry.
 
-### Build application image
+### Build container image
 
 ```buildoutcfg
 # build image described in Dockerfile
@@ -21,9 +21,13 @@ docker image ls
 # observe all docker layers that make up the image
 docker image history nodejs-app:blue
 ```
+**Note:** The <missing> lines in the docker history output indicate that those layers were built on another system.
+
 More about docker build at: https://docs.docker.com/engine/reference/commandline/build/
 
 ### Run and check your application container
+
+An image becomes a container once the docker container run command is executed.
 
 ```buildoutcfg
 # run nodejs app on 8080 locahost port from local image
@@ -111,6 +115,7 @@ docker volume ls
 More on docker volumes: https://docs.docker.com/storage/volumes/
 
 ### Docker networking
+
 * Docker provides networking access to containers via a bridge interface on the Docker host.
 * Default bridge subnet 172.17.0.0/16 and Gateway 172.17.0.1/16.
 * Docker daemon effectively acts as a DHCP server for each container.
@@ -145,6 +150,7 @@ https://docs.docker.com/config/containers/container-networking/
 https://docs.docker.com/network/network-tutorial-host/
 
 ### Share Docker image
+
 ```buildoutcfg
 # tag image for DockerHub registry
 docker image tag nodejs-app:blue andreistefanciprian/nodejs-app:blue
@@ -166,16 +172,18 @@ docker container run --publish 8080:8080 --detach --name nodejs-app andreistefan
 ```
 
 ### Commands and arguments
+
 Both CMD and ENTRYPOINT instructions define what command gets executed when running a container. 
+
 There are few rules that describe their cooperation:
-* Dockerfile should specify at least one of CMD or ENTRYPOINT commands.
+* The Dockerfile should specify at least one of CMD or ENTRYPOINT commands.
 * ENTRYPOINT should be defined when using the container as an executable.
 * CMD should be used as a way of defining default arguments for an ENTRYPOINT command or for executing an ad-hoc command in a container.
 * There can only be one CMD instruction in a Dockerfile. If you list more than one CMD then only the last CMD will take effect.
 * CMD will be overridden when running the container with alternative arguments.
 * ENTRYPOINT can be overridden when running container with --entrypoint flag
 
-Note: If CMD is used to provide default arguments for the ENTRYPOINT instruction, both the CMD and ENTRYPOINT instructions should be specified with the JSON array format.
+**Note:** If CMD is used to provide default arguments for the ENTRYPOINT instruction, both the CMD and ENTRYPOINT instructions should be specified with the JSON array format.
 
 ```
 cat << EOF > Dockerfile
