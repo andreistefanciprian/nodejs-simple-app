@@ -1,8 +1,9 @@
 # Use the official image as a parent image
-FROM node:7
+FROM node:12.17-alpine3.11
 
-# Create username with sudo rights for demo purposes
-RUN useradd --shell /bin/bash --system -m -G sudo nodejsapp \
+# Create user and group
+RUN addgroup nodejsapp \
+&& adduser -D --shell /bin/ash -G nodejsapp nodejsapp \
 && mkdir -p /app/data \
 && chown nodejsapp:nodejsapp /app/data
 
