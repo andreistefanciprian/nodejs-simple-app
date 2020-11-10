@@ -1,10 +1,10 @@
 
-# Prerequisites
+## PART 1 - Build and Run application with Docker image and container
+
+### Prerequisites
 
 Have account on hub.docker.com.
 We'll use this account later for pushing docker images to a docker registry.
-
-# PART 1 - Build and Run application with Docker image and container
 
 ### Build application image
 
