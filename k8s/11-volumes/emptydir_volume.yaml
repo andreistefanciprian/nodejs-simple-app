@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      securityContext:
+        runAsUser: 0
+        runAsGroup: 0
+        fsGroup: 0
+      containers:
+      - name: nginx
+        image: nginx-demo:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80        
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
+          timeoutSeconds: 1
+          periodSeconds: 5
+        volumeMounts:
+        - mountPath: /app/data
+          name: data-volume
+      volumes:
+      - name: data-volume
+        emptyDir: {}

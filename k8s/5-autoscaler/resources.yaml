@@ -1,8 +1,6 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  labels:
-    app: nodejs-app
   name: nodejs-app
 spec:
   replicas: 2
@@ -14,14 +12,10 @@ spec:
       labels:
         app: nodejs-app
     spec:
-      securityContext:
-        runAsUser: 999
-        runAsGroup: 999
-        fsGroup: 999
       containers:
       - name: nodejs-app
-        image: andreistefanciprian/nodejs-app:blue
-        imagePullPolicy: Always
+        image: andreistefanciprian/nodejs-app
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
         livenessProbe:
@@ -38,3 +32,30 @@ spec:
           requests:
             cpu: 100m
             memory: 100Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nodejs-app
+spec:
+  type: NodePort
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
+    nodePort: 30001
+  selector:
+    app: nodejs-app
+---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: nodejs-app
+spec:
+  maxReplicas: 5
+  minReplicas: 2
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: nodejs-app
+  targetCPUUtilizationPercentage: 30

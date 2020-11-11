@@ -1,8 +1,6 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  labels:
-    app: nodejs-app-canary
   name: nodejs-app-canary
 spec:
   replicas: 1
@@ -14,13 +12,9 @@ spec:
       labels:
         app: nodejs-app
     spec:
-      securityContext:
-        runAsUser: 999
-        runAsGroup: 999
-        fsGroup: 999
       containers:
       - name: nodejs-app
-        image: andreistefanciprian/nodejs-app:canary
-        imagePullPolicy: Always
+        image: nodejs-app:green
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080

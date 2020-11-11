@@ -2,8 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: nodejs-app-prod
-  name: nodejs-app-prod
+    app: nodejs-app
+  name: nodejs-app
 spec:
   replicas: 3
   selector:
@@ -14,13 +14,9 @@ spec:
       labels:
         app: nodejs-app
     spec:
-      securityContext:
-        runAsUser: 999
-        runAsGroup: 999
-        fsGroup: 999
       containers:
       - name: nodejs-app
-        image: andreistefanciprian/nodejs-app:blue
-        imagePullPolicy: Always
+        image: andreistefanciprian/nodejs-app
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080

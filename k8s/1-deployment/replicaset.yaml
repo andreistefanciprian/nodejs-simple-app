@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: nodejs-app
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      run: nodejs-app
+  template:
+    metadata:
+      labels:
+        run: nodejs-app
+    spec:
+      containers:
+      - image: andreistefanciprian/nodejs-app
+        imagePullPolicy: IfNotPresent
+        name: nodejs-app
+        ports:
+        - containerPort: 8080        

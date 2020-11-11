@@ -8,27 +8,33 @@ services:
       dockerfile: Dockerfile
       args:
         API_VER: v3
-    image: nodejs-app:yellow
+    # user: root
+    image: nodejs-app:$IMAGE_TAG
     container_name: nodejs-app
-    ports:
-      - 8080:8080
+    env_file:
+      - db.env
     environment:
-      NEW_ENV_VAR: new-value
+      DB_HOST: $DB_HOST
     volumes:
-      - .:/app/test
+      - app-data:/app/data
     networks:
       - test
+    ports:
+      - 8080:8080
 
 networks:
   test:
 
+volumes:
+  app-data:
+
 ## This docker-compose.yaml file is the equivalent of following commands
-#
+
 ## create docker network
 #docker network create test
-#
+
 ## build docker image
 #docker image build --build-arg API_VER=v3 -t nodejs-app:yellow .
-#
+
 ## run image as container
-#docker container run -p 8080:8080 -d -e NEW_ENV_VAR=new-value -v $(pwd):/app/test --network test --name nodejs-app nodejs-app:yellow
+#docker container run -u root -p 8080:8080 -d -e DB_HOST=new-value --env-file=db.env -v app-data:/app/data --network test --name nodejs-app nodejs-app:yellow

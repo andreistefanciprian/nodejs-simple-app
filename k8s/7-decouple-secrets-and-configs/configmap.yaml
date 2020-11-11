@@ -23,3 +23,6 @@ data:
                 location = /50x.html {
             }
         }
+
+# create resource with kubectl      
+# kubectl create configmap conf --from-file=k8s/7-decouple-secrets-and-configs/default.conf
