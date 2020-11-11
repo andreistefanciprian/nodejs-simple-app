@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    run: nodejs-app
+  name: nodejs-app
+spec:
+  containers:
+  - image: nodejs-app:blue
+    imagePullPolicy: IfNotPresent
+    name: nodejs-app
+    ports:
+    - containerPort: 8080
