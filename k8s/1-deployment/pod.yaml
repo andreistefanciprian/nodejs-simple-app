@@ -6,7 +6,7 @@ metadata:
   name: nodejs-app
 spec:
   containers:
-  - image: nodejs-app:blue
+  - image: andreistefanciprian/nodejs-app
     imagePullPolicy: IfNotPresent
     name: nodejs-app
     ports:

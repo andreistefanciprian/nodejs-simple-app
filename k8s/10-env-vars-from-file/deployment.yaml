@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: nodejs-app
-        image: nodejs-app:blue
+        image: andreistefanciprian/nodejs-app
         imagePullPolicy: IfNotPresent
         
         envFrom:

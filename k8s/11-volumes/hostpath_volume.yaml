@@ -20,7 +20,7 @@ spec:
         fsGroup: 0    
       containers:
       - name: nodejs-app
-        image: nodejs-app:blue
+        image: andreistefanciprian/nodejs-app
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
