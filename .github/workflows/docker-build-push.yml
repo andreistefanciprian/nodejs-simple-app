@@ -44,7 +44,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ secrets.DOCKERHUB_USERNAME }}/nodejs-app
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/nodejs-simple-app
 
       - name: Build and push Docker image with SBOM and provenance
         uses: docker/build-push-action@v5
