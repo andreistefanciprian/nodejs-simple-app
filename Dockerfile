@@ -1,23 +1,26 @@
-# Use the official image as a parent image
-FROM node:12.17-alpine3.11
+# Use the latest LTS Node.js Alpine image
+FROM node:20-alpine as base
 
-# Create user and group
-RUN addgroup nodejsapp \
-&& adduser -D --shell /bin/ash -G nodejsapp nodejsapp \
-&& mkdir -p /app/data \
-&& chown nodejsapp:nodejsapp /app/data
+# Set working directory
+WORKDIR /usr/src/app
+
+# Copy package files and install dependencies
+# Copy both package.json and package-lock.json (if present) for better caching
+COPY package.json package-lock.json* ./
+RUN npm ci --omit=dev
+
+# Copy the file from your host to your current location
+COPY app.js ./
+COPY app.test.js ./
+
+# Create user and group, set permissions for data directory
+RUN addgroup -S nodejsapp \
+    && adduser -S -G nodejsapp nodejsapp \
+    && mkdir -p /app/data \
+    && chown -R nodejsapp:nodejsapp /app/data
 
 # Set the user name (or UID) and optionally the user group (or GID)
 USER nodejsapp
-
-# Set the working directory
-WORKDIR /usr/src/app
-
-# Copy the file from your host to your current location
-# COPY app.js .
-ADD --chown=nodejsapp:nodejsapp app.js .
-ADD --chown=nodejsapp:nodejsapp app.test.js .
-ADD --chown=nodejsapp:nodejsapp package.json .
 
 # Define Environment Variable. Can be changed at run-time
 ENV IMAGE_VERSION=blue
@@ -42,5 +45,5 @@ EXPOSE 8080
 # Run command to start application at run-time
 # CMD node app.js
 
-ENTRYPOINT [ "npm"]
+ENTRYPOINT ["npm"]
 CMD ["start"]
