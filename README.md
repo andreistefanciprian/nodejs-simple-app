@@ -1,249 +1,219 @@
-
-## PART 1 - Build and Run application with Docker image and container
+## PART 1 - Build and Run Application with Docker
 
 ### Prerequisites
+- Create an account on [hub.docker.com](https://hub.docker.com/). You'll need this to push images to a Docker registry later.
 
-Have account on hub.docker.com.
-We'll use this account later for pushing docker images to a docker registry.
+---
 
-### Build container image
-
-```buildoutcfg
-# build image described in Dockerfile
+### Build Container Image
+```sh
+# Build image from Dockerfile
 docker image build -t nodejs-app:blue .
 
-# build image and override built-time variable
+# Build image and override build-time variable
 docker image build --build-arg API_VER=v2 -t nodejs-app:blue .
 
-# verify image is available locally
+# List local images
 docker image ls
 
-# observe all docker layers that make up the image
+# Show all layers of the image
 docker image history nodejs-app:blue
 ```
-**Note:** The <missing> lines in the docker history output indicate that those layers were built on another system.
+> **Note:** `<missing>` lines in the history output mean those layers were built elsewhere.
 
-More about docker build at: https://docs.docker.com/engine/reference/commandline/build/
+More: [docker build docs](https://docs.docker.com/engine/reference/commandline/build/)
 
-### Run and check your application container
+---
 
-An image becomes a container once the docker container run command is executed.
-
-```buildoutcfg
-# run nodejs app on 8080 locahost port from local image
+### Run and Check Your Application Container
+An image becomes a container when you run it.
+```sh
+# Run app on localhost:8080 from local image
 docker container run --publish 8080:8080 --detach --name nodejs-app nodejs-app:blue
 
-# get a prompt inside the container and do some checks
+# Get a shell inside the container
 docker exec -ti nodejs-app sh
 
-# get PID of running processes inside container
+# List running processes in the container
 docker container top nodejs-app
 
-# check these processes are running on localhost
-ps u PID
+# Check processes on localhost
+ps u <PID>
 
-# monitor resource usage
+# Monitor resource usage
 docker container stats --no-stream
 
-# check application is running on port 80080
+# Check app is running on port 8080
 sudo netstat -tapnl | grep 8080
 
-# access application
+# Access the app
 curl localhost:8080
 
-# check application logs on container
-docker container logs nodejs -f
+# View container logs
+docker container logs nodejs-app -f
 ```
 
-### Pass environment variables to your container
+---
 
-```
-# pass environment variable at run time with the ‘-e’ flag:
+### Pass Environment Variables to Your Container
+```sh
+# Pass env variable at run time
 docker container run --publish 8080:8080 --detach -e DEBUG=1 --name nodejs-app nodejs-app:blue
 
-# pass multiple environment variables from an external file with the ‘env_file’ option
+# Pass multiple env variables from a file
 docker container run --publish 8080:8080 --detach --env-file=db.env --name nodejs-app nodejs-app:blue
 ```
-More on this at: https://docs.docker.com/compose/environment-variables/#pass-environment-variables-to-containers
+More: [Passing env vars](https://docs.docker.com/compose/environment-variables/#pass-environment-variables-to-containers)
 
-### Data persistency
+---
 
-Because containers are ephemeral and immutable, and we have to redeploy them every time there is a change in our application, the data inside the container isn’t persisted across container removals unless it’s in a data volume or a bind mount.
-Data volume - stores data outside container’s unified file system (UFS)
-Bind mount - maps localhost path to a container path
+### Data Persistency
+Containers are ephemeral. Use **data volumes** or **bind mounts** to persist data.
 
-Named data volume demo:
-```
-# build application with name data volume
+#### Named Data Volume Example
+```sh
+# Run app with named data volume
 docker container run -p 8080:8080 -d -v app-data:/app/data --name nodejs-app nodejs-app:blue
 
-# check data volume 
+# List and inspect volumes
 docker volume ls
 docker volume inspect app-data
-[
-    {
-        "CreatedAt": "2020-03-25T07:20:10Z",
-        "Mountpoint": "/var/lib/docker/volumes/app-data/_data",
-        "Name": "app-data",
-    }
-]
 
-# create a file inside container's data volume
+# Create a file in the data volume
 docker exec -ti nodejs-app touch /app/data/file1.txt
 
-# check file is available outside container
+# Check file outside container
 sudo ls -larth /var/lib/docker/volumes/app-data/_data
 
-# remove container to show data volume is persistent
+# Remove container (data persists)
 docker container rm -f nodejs-app
 
-# create a new container for our application and verify data is persistent across container removals
+# Start new container, verify data persists
 docker container run -ti --rm -v app-data:/app/data --name nodejs-app2 nodejs-app:blue ls /app/data
 ```
 
-Bind mount is useful when doing development:
-```
-# build application with bind mount
+#### Bind Mount Example (for development)
+```sh
 cd nodejs-simple-app
 docker container run -p 8080:8080 -d -v $(pwd):/usr/src/app --name nodejs-app nodejs-app:blue
 
-# check no volume is created
 docker volume ls
-
-# create a new file in current directory, then verify if the new file is also available inside the container
+# Create a file in your project dir, check it's in the container
 ```
-More on docker volumes: https://docs.docker.com/storage/volumes/
+More: [Docker volumes](https://docs.docker.com/storage/volumes/)
 
-### Docker networking
+---
 
-* Docker provides networking access to containers via a bridge interface on the Docker host.
-* Default bridge subnet 172.17.0.0/16 and Gateway 172.17.0.1/16.
-* Docker daemon effectively acts as a DHCP server for each container.
-* Each network also has a default subnet mask and gateway.
-* A container’s name defaults to be the container’s DNS name in Docker.
+### Docker Networking
+- Docker uses a bridge interface for container networking.
+- Default subnet: 172.17.0.0/16, Gateway: 172.17.0.1
+- Each container gets a DNS name matching its container name.
+
 ![Docker networks](docker-networks.png)
-```
-# create containers
+
+```sh
+# Create containers
 docker container run -d --name app1 nodejs-app:blue
 docker container run -d --name app2 nodejs-app:blue
 
-# create network new-net and attach containers to it
+# Create and connect to a new network
 docker network create new-net
 docker network connect new-net app1
 docker network connect new-net app2
 
-# verify network new-net has containers attached
 docker network inspect new-net
 
-# verify DNS resolution
 docker exec -ti app1 ping app2
 
-# disconnect containers from new-net
 docker network disconnect new-net app1
 docker network disconnect new-net app2
 
-# verify DNS resolution in default/bridge network. Shouldn't work
-docker exec -ti app1 ping app2
+docker exec -ti app1 ping app2  # Should fail now
 ```
-More on Docker networking:
-https://docs.docker.com/config/containers/container-networking/
-https://docs.docker.com/network/network-tutorial-host/
+More: [Container networking](https://docs.docker.com/config/containers/container-networking/)
 
-### Share Docker image
+---
 
-```buildoutcfg
-# tag image for DockerHub registry
+### Share Docker Image
+```sh
+# Tag image for DockerHub
 docker image tag nodejs-app:blue andreistefanciprian/nodejs-app:blue
 
-# authenticate to dockerhub
+# Login to DockerHub
 docker login -u andreistefanciprian
 
-# push image to DockerHub registry
+# Push image
 docker image push andreistefanciprian/nodejs-app:blue
 
-# delete container and container image
+# Remove container and image
 docker container rm -f nodejs-app
 docker image rm nodejs-app:blue andreistefanciprian/nodejs-app:blue
 
-# run nodejs app on 8080 locahost port from DockerHub image
+# Run app from DockerHub image
 docker container run --publish 8080:8080 --detach --name nodejs-app andreistefanciprian/nodejs-app:blue
-
-# you can repeat test checks in previous section to verify your container runs as expected
 ```
 
-### Commands and arguments
+---
 
-Both CMD and ENTRYPOINT instructions define what command gets executed when running a container. 
+### Commands and Arguments
+- `CMD` and `ENTRYPOINT` define what runs in a container.
+- Only one `CMD` per Dockerfile (last one wins).
+- `CMD` is overridden by arguments at run.
+- `ENTRYPOINT` is overridden with `--entrypoint` flag.
+- Use JSON array format if combining `CMD` and `ENTRYPOINT`.
 
-There are few rules that describe their cooperation:
-* The Dockerfile should specify at least one of CMD or ENTRYPOINT commands.
-* ENTRYPOINT should be defined when using the container as an executable.
-* CMD should be used as a way of defining default arguments for an ENTRYPOINT command or for executing an ad-hoc command in a container.
-* There can only be one CMD instruction in a Dockerfile. If you list more than one CMD then only the last CMD will take effect.
-* CMD will be overridden when running the container with alternative arguments.
-* ENTRYPOINT can be overridden when running container with --entrypoint flag
-
-**Note:** If CMD is used to provide default arguments for the ENTRYPOINT instruction, both the CMD and ENTRYPOINT instructions should be specified with the JSON array format.
-
-```
-cat << EOF > Dockerfile
+Example:
+```Dockerfile
 FROM ubuntu
 ENTRYPOINT ["sleep"]
 CMD ["30"]
-EOF
-
-# build image
+```
+```sh
+# Build and run
 docker image build -t ubuntu:sleep .
-
-# run container with default entrypoint and command argument
 docker container run -d --name ubuntu ubuntu:sleep
 
-# overwrite command argument (CMD)
 docker container run -d --name ubuntu ubuntu:sleep 60
 
-# run container with different entrypoint and command argument
 docker container run -d --name ubuntu --entrypoint ls ubuntu:sleep -larth
 docker container logs ubuntu
-
-# do the same thing in kubernetes
+```
+Kubernetes equivalent:
+```sh
 kubectl run ubuntu --image ubuntu:sleep --restart Never --image-pull-policy IfNotPresent
 kubectl run ubuntu --image ubuntu:sleep --restart Never --image-pull-policy IfNotPresent 100
 kubectl run ubuntu --image ubuntu:sleep --restart Never --image-pull-policy IfNotPresent --command ls -- -larth
 kubectl logs ubuntu
 ```
-More about commands and arguments:
-https://docs.docker.com/engine/reference/builder/#cmd
-https://docs.docker.com/engine/reference/builder/#entrypoint
+More: [CMD](https://docs.docker.com/engine/reference/builder/#cmd), [ENTRYPOINT](https://docs.docker.com/engine/reference/builder/#entrypoint)
 
+---
 
 ### Docker Compose
-Replacing docker run, build and create commands with a yaml file that’s easy to read and document.
-Usually used for multi container applications.
- 
-In this docker-compose file we're passing environment variables to compose. 
-There are many ways to deal with this in compose: https://docs.docker.com/compose/environment-variables/
-* You can set default values for any environment variables referenced in the Compose file, or used to configure Compose, in an environment file named .env. You can print to the terminal the resolved output of the compose file with the docker-compose config command.
-* The .env file can be overwritten by variables defined in shell
-* Environment variables can also be passed to your container via env_file field
+Docker Compose replaces `docker run`, `build`, and `create` commands with a simple YAML file. Great for multi-container apps.
 
-Start/Stop application with docker compose:
-```
-# build application with docker compose
+- Set default env vars in a `.env` file. Shell vars override `.env`.
+- Use `env_file` to pass env vars to containers.
+- See resolved config: `docker-compose config`
+
+```sh
+# Build and start app
 docker-compose up --build -d
- 
-# Values in the shell take precedence over those specified in the .env file:
+
+# Override env vars in shell
 IMAGE_TAG=orange \
 DB_HOST=2.2.2.2 \
 docker-compose up -d
- 
-# stop application with docker compose
+
+# Stop app
 docker-compose down
 ```
+More: [Compose file options](https://docs.docker.com/compose/compose-file/)
 
-More about the ‘key: value’ options inside docker compose file at: https://docs.docker.com/compose/compose-file/
+---
 
-### Run node tests
-```
+### Run Node Tests
+```sh
 docker container run -p 8080:8080 --name nodejs-app nodejs-app:blue test
 ```
 
