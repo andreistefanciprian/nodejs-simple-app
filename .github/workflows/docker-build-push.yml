@@ -47,6 +47,7 @@ jobs:
           images: ${{ secrets.DOCKERHUB_USERNAME }}/nodejs-simple-app
 
       - name: Build and push Docker image with SBOM and provenance
+        id: build-and-push
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -60,5 +61,5 @@ jobs:
         uses: actions/attest-build-provenance@v1
         with:
           subject-name: ${{ steps.meta.outputs.images }}
-          subject-digest: ${{ steps.meta.outputs.digest }}
+          subject-digest: ${{ steps.build-and-push.outputs.digest }}
           push-to-registry: true
