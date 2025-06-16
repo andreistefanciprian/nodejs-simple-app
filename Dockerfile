@@ -20,13 +20,13 @@ ADD --chown=nodejsapp:nodejsapp app.test.js .
 ADD --chown=nodejsapp:nodejsapp package.json .
 
 # Define Environment Variable. Can be changed at run-time
-ENV IMAGE_VERSION blue
+ENV IMAGE_VERSION=blue
 
 # Define a variable. Can be changed at build-time and can have a hard-coded default value
 ARG API_VER=v1
 
 # Consume build-time variable
-ENV API_VERSION $API_VER
+ENV API_VERSION=$API_VER
 
 # Inform Docker that the container is listening on the specified port at run-time
 EXPOSE 8080
