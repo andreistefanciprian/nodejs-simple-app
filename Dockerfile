@@ -1,5 +1,5 @@
 # Use the latest LTS Node.js Alpine image
-FROM node:20-alpine as base
+FROM node:20-alpine AS base
 
 # Set working directory
 WORKDIR /usr/src/app
