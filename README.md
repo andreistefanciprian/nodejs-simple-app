@@ -226,13 +226,13 @@ Replace the digest below with your actual image digest if needed.
 
 ```sh
 # Inspect SLSA provenance attestation (JSON output)
-docker buildx imagetools inspect andreistefanciprian/nodejs-simple-app@sha256:1d39f63d56d617a43d77ae04b83a5183d568c047ad0f4609776c52816da48458 --format '{{ json .Provenance.SLSA }}'
+docker buildx imagetools inspect <IMAGE>@sha256:<DIGEST> --format '{{ json .Provenance.SLSA }}'
 
 # Inspect all image metadata, including attestations
-docker buildx imagetools inspect andreistefanciprian/nodejs-simple-app@sha256:1d39f63d56d617a43d77ae04b83a5183d568c047ad0f4609776c52816da48458
+docker buildx imagetools inspect <IMAGE>@sha256:<DIGEST>
 
 # Inspect SBOM (Software Bill of Materials)
-docker sbom andreistefanciprian/nodejs-simple-app@sha256:1d39f63d56d617a43d77ae04b83a5183d568c047ad0f4609776c52816da48458 --format '{{ json .SBOM }}'
+docker sbom <IMAGE>@sha256:<DIGEST> --format '{{ json .SBOM }}'
 ```
 
 > **Tip:** You need Docker 23.0+ and buildx plugin for these commands. See the [Docker documentation](https://docs.docker.com/build/attestations/) for more details.
