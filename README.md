@@ -217,5 +217,25 @@ More: [Compose file options](https://docs.docker.com/compose/compose-file/)
 docker container run -p 8080:8080 --name nodejs-app nodejs-app:blue test
 ```
 
+---
+
+### Check Image Attestations and SBOM
+You can inspect provenance attestations and [SBOM](https://docs.docker.com/guides/docker-scout/sbom/) (Software Bill of Materials) for your pushed Docker images using `docker buildx` and `docker sbom`.
+
+Replace the digest below with your actual image digest if needed.
+
+```sh
+# Inspect SLSA provenance attestation (JSON output)
+docker buildx imagetools inspect <IMAGE>@sha256:<DIGEST> --format '{{ json .Provenance.SLSA }}'
+
+# Inspect all image metadata, including attestations
+docker buildx imagetools inspect <IMAGE>@sha256:<DIGEST>
+
+# Inspect SBOM (Software Bill of Materials)
+docker sbom <IMAGE>@sha256:<DIGEST> --format '{{ json .SBOM }}'
+```
+
+> **Tip:** You need Docker 23.0+ and buildx plugin for these commands. See the [Docker documentation](https://docs.docker.com/build/attestations/) for more details.
+
 
 
