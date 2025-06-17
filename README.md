@@ -220,7 +220,7 @@ docker container run -p 8080:8080 --name nodejs-app nodejs-app:blue test
 ---
 
 ### Check Image Attestations and SBOM
-You can inspect provenance attestations and SBOM (Software Bill of Materials) for your pushed Docker images using `docker buildx` and `docker sbom`.
+You can inspect provenance attestations and [SBOM](https://docs.docker.com/guides/docker-scout/sbom/) (Software Bill of Materials) for your pushed Docker images using `docker buildx` and `docker sbom`.
 
 Replace the digest below with your actual image digest if needed.
 
