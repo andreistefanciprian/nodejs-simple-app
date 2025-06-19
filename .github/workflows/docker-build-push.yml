@@ -57,6 +57,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           provenance: true
           sbom: true
+          build-args: TEST_VAR1=test1,TEST_VAR2=test2
 
       - name: Publish image attestations
         uses: actions/attest-build-provenance@v1
